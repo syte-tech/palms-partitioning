@@ -31,7 +31,7 @@ void Interval::setR(int right){
     r = right;
 }
 void Interval::setUdata(mat y){
-    u_data = b_data;
+    u_data = y; // Fixed typo from original code (was b_data)
 }
 void Interval::setAdata(mat z){
     a_data = z;
@@ -78,6 +78,10 @@ void Interval::addBottomDataPoint(const int nr_channels,
         vec x1_old = a_data.col(0);
         u_data.col(0) = c*f1_old + s*x1_old;
         a_data.col(0) = -s*f1_old + c*x1_old;
+        
+        u_data.resize(u_data.n_rows, 2);
+        a_data.resize(a_data.n_rows, 2);
+        // ---------------------------------------------------------------
     }
     // Eliminate new row 1
     for(int j=0; j < 2; j++) {
