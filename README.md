@@ -6,6 +6,20 @@ below for the creators.
 
 This is a wrapper for Python, which can also handle pointcloud data, i.e., solve the model on "stripes" through a pointcloud.
 
+## Installation
+To use the wrapper, you need to install OpenMP and Armadillo.
+
+For MacOS:
+```
+brew install libomp armadillo
+```
+
+For Linux: 
+```
+sudo apt-get install libarmadillo-dev
+sudo apt-get install libomp-dev
+```
+
 ## References
 - L. Kiefer, M. Storath, A. Weinmann.
     "An efficient algorithm for the piecewise affine-linear Mumford-Shah model based on a Taylor jet splitting."
