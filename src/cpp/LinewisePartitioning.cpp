@@ -66,3 +66,47 @@ void LinewisePartitioning(cube &u_out,cube &a_out,cube &b_out,
     }
 }
 
+void RunSolverOnStripes(cube &u_out, cube &a_out, cube &b_out,
+                        const int nr_channels,
+                        std::vector<Stripe> &L_udata, 
+                        std::vector<Stripe> &L_adata,
+                        std::vector<Stripe> &L_bdata,
+                        double gamma_s, double eta_s,
+                        mat &C_linear, mat &S_linear, mat &C_const, mat &S_const) 
+{
+    #pragma omp parallel for schedule(dynamic)
+    for(unsigned int iter = 0; iter < L_udata.size(); ++iter) {
+        Stripe &stripe_udata = L_udata[iter];
+        Stripe &stripe_adata = L_adata[iter];
+        Stripe &stripe_bdata = L_bdata[iter];
+        
+        int stripe_length = stripe_udata.giveLength();
+        uvec linear_indices = stripe_udata.getIndices();
+        
+        if(stripe_length < 2) {
+            // For length 1, just copy input to output
+            u_out.elem(linear_indices) = stripe_udata.getData().t();
+            a_out.elem(linear_indices) = stripe_adata.getData().t();
+            b_out.elem(linear_indices) = stripe_bdata.getData().t();
+            continue;
+        }
+
+        ivec L(stripe_length);
+        vec Eps1R = Compute1rErrors(eta_s*stripe_udata.getData(), stripe_adata.getData(), stripe_bdata.getData(),
+                                    nr_channels, C_linear, S_linear, C_const, S_const);
+                                    
+        FindBest1DPartition(stripe_udata.getData(), stripe_adata.getData(), stripe_bdata.getData(), stripe_length,
+                            nr_channels, gamma_s, eta_s, Eps1R, C_linear, S_linear, C_const, S_const, L);
+
+        mat a_curr = zeros(nr_channels, stripe_length);
+        mat b_curr = zeros(nr_channels, stripe_length);
+        mat u_curr = zeros(nr_channels, stripe_length);
+        
+        ReconstructionFromPartition(L, stripe_udata.getData(), stripe_adata.getData(), stripe_bdata.getData(),
+                                    stripe_length, nr_channels, eta_s, C_linear, S_linear, u_curr, a_curr, b_curr);
+
+        u_out.elem(linear_indices) = u_curr.t();
+        a_out.elem(linear_indices) = a_curr.t();
+        b_out.elem(linear_indices) = b_curr.t();
+    }
+}

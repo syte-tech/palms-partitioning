@@ -27,6 +27,14 @@ void LinewisePartitioning(cube &u_out,cube &a_out,cube &b_out,
                           cube &u_data,cube &a_data,cube &b_data,vec &dir, double gamma_s,
                           double eta_s,mat &C_linear, mat &S_linear, mat &C_const, mat &S_const);
 
+void RunSolverOnStripes(cube &u_out, cube &a_out, cube &b_out,
+                        const int nr_channels,
+                        std::vector<Stripe> &L_udata, 
+                        std::vector<Stripe> &L_adata,
+                        std::vector<Stripe> &L_bdata,
+                        double gamma_s, double eta_s,
+                        mat &C_linear, mat &S_linear, mat &C_const, mat &S_const);
+
 // Extracts and stores the stripes of the input image
 void Extract1Dstripes(const cube &I, const vec &dir,std::vector<Stripe>  &L, const int m, const int n,const int nr_channels);
 

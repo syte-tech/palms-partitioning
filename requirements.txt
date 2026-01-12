@@ -1,0 +1,6 @@
+pybind11
+numpy
+setuptools
+scipy
+matplotlib
+plotly

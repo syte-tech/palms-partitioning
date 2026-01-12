@@ -14,7 +14,7 @@
 uvec GetIndexes(int x_lim,int x_cor,int x_dir,int y_lim,int y_cor,int y_dir){
     
     // Determine the number of steps from (x_cor,y_cor) to (x_lim,y_lim) in terms of the direction (x_dir,y_dir)
-    int nr_steps;
+    int nr_steps = 0;
     
     if (x_dir == 0)
         nr_steps = ((y_lim-y_cor)-1)/y_dir;
